@@ -1,17 +1,23 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { MousePointer2, Keyboard, Gamepad2, Hand, Activity, RotateCcw, Zap, PenTool, Smartphone, Vibrate } from 'lucide-react';
 
+// --- Sub-components ---
+
+// 1. LIVE INPUTS BANNER
 const LiveInputsBanner = ({ activeKeys, pointerData, gamepad }) => {
   const inputs = [];
   
+  // Pointer
   if (pointerData.buttons.left) inputs.push({ type: pointerData.type, label: 'Primary Click', color: 'bg-blue-600' });
   if (pointerData.buttons.middle) inputs.push({ type: pointerData.type, label: 'Middle Click', color: 'bg-blue-600' });
   if (pointerData.buttons.right) inputs.push({ type: pointerData.type, label: 'Secondary Click', color: 'bg-red-500' });
 
+  // Keyboard
   Object.values(activeKeys).forEach(k => {
       inputs.push({ type: 'Key', label: k.key === ' ' ? 'Space' : k.key, color: 'bg-purple-600' });
   });
 
+  // Gamepad
   if (gamepad) {
       const buttonNames = ['A', 'B', 'X', 'Y', 'L1', 'R1', 'L2', 'R2', 'Select', 'Start', 'L3', 'R3', 'D-Up', 'D-Down', 'D-Left', 'D-Right', 'Home'];
       gamepad.buttons.forEach((btn, idx) => {
@@ -45,6 +51,7 @@ const LiveInputsBanner = ({ activeKeys, pointerData, gamepad }) => {
   );
 };
 
+// 2. POINTER & STYLUS VISUALIZER
 const PointerVisualizer = ({ pointerData, scrollData, pollingRate }) => {
   const isPen = pointerData.type === 'pen';
 
@@ -62,6 +69,7 @@ const PointerVisualizer = ({ pointerData, scrollData, pollingRate }) => {
       </div>
 
       <div className="flex-1 grid grid-cols-2 gap-4 z-10">
+        {/* Left Col: Visuals */}
         <div className="flex flex-col items-center justify-center">
             <div className="relative w-24 h-36 bg-slate-100 rounded-full border-4 border-slate-300 shadow-md flex flex-col overflow-hidden mb-4">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-0.5 h-full bg-slate-200" />
@@ -79,6 +87,7 @@ const PointerVisualizer = ({ pointerData, scrollData, pollingRate }) => {
             <div className="text-xs font-mono text-slate-400">Type: <strong className="text-slate-700 uppercase">{pointerData.type}</strong></div>
         </div>
 
+        {/* Right Col: Telemetry */}
         <div className="flex flex-col justify-center gap-3">
             <div className="bg-slate-50 p-2 rounded-lg border border-slate-100">
                <div className="text-[9px] text-slate-400 uppercase font-bold mb-1">Coordinates</div>
@@ -115,6 +124,7 @@ const PointerVisualizer = ({ pointerData, scrollData, pollingRate }) => {
   );
 };
 
+// 3. KEYBOARD VISUALIZER
 const KeyboardVisualizer = ({ activeKeys, history, maxNkro }) => {
   const activeCount = Object.keys(activeKeys).length;
   
@@ -160,6 +170,7 @@ const KeyboardVisualizer = ({ activeKeys, history, maxNkro }) => {
   );
 };
 
+// 4. TOUCHPAD & DEVICE HAPTICS
 const TouchVisualizer = ({ touches }) => {
   const canvasRef = useRef(null);
 
@@ -245,6 +256,7 @@ const TouchVisualizer = ({ touches }) => {
   );
 };
 
+// 5. GAMEPAD VISUALIZER
 const GamepadVisualizer = ({ gamepad, gamepadIndex }) => {
   const testRumble = () => {
     try {
@@ -355,25 +367,36 @@ const GamepadVisualizer = ({ gamepad, gamepadIndex }) => {
   );
 };
 
+
+// MAIN APP ROOT
 export default function App() {
+  // Pointer State
   const [pointerData, setPointerData] = useState({
      type: 'mouse', x: 0, y: 0, pressure: 0, tiltX: 0, tiltY: 0,
      buttons: { left: false, right: false, middle: false }
   });
   const [scrollData, setScrollData] = useState({ x: 0, y: 0, z: 0 });
   const [pollingRate, setPollingRate] = useState(0);
+  
+  // Keyboard State
   const [activeKeys, setActiveKeys] = useState({});
   const [keyHistory, setKeyHistory] = useState([]);
   const [maxNkro, setMaxNkro] = useState(0);
+  
+  // Touch State
   const [touches, setTouches] = useState([]);
+  
+  // Gamepad State
   const [gamepad, setGamepad] = useState(null);
   const [gamepadIndex, setGamepadIndex] = useState(null);
   
+  // Tracking Refs
   const mouseMoveCount = useRef(0);
   const gamepadReqRef = useRef(null);
 
+  // --- Pointer Logic (Mouse, Stylus, Touch-click) ---
   const handlePointer = useCallback((e, isDown) => {
-    if (e.type === 'pointermove' && e.pointerType === 'touch') return; 
+    if (e.type === 'pointermove' && e.pointerType === 'touch') return; // Handled by Touch API
 
     const map = { 0: 'left', 1: 'middle', 2: 'right', 5: 'pen_eraser' };
     
@@ -416,6 +439,8 @@ export default function App() {
      return () => clearInterval(interval);
   }, []);
 
+
+  // --- Keyboard Logic ---
   const handleKeyDown = useCallback((e) => {
     if(['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.code)) e.preventDefault();
     if(e.repeat) return; 
@@ -437,10 +462,14 @@ export default function App() {
     });
   }, []);
 
+
+  // --- Touch Logic ---
   const handleTouch = useCallback((e) => {
     setTouches(Array.from(e.touches));
   }, []);
   
+
+  // --- Gamepad Logic ---
   useEffect(() => {
     const scan = () => {
       const gps = navigator.getGamepads ? navigator.getGamepads() : [];
@@ -468,6 +497,8 @@ export default function App() {
     }
   }, []);
 
+
+  // --- Attach Window Listeners ---
   useEffect(() => {
     window.addEventListener('pointerdown', handlePointerDown);
     window.addEventListener('pointerup', handlePointerUp);
@@ -490,10 +521,12 @@ export default function App() {
     };
   }, [handlePointerDown, handlePointerUp, handlePointerMove, handleWheel, handleKeyDown, handleKeyUp]);
 
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans p-4 md:p-8" 
          onTouchStart={handleTouch} onTouchMove={handleTouch} onTouchEnd={handleTouch} onTouchCancel={handleTouch}>
       
+      {/* Header */}
       <header className="max-w-5xl mx-auto mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
          <div>
              <h1 className="text-3xl font-black flex items-center gap-3 text-slate-900 tracking-tight">
@@ -512,8 +545,11 @@ export default function App() {
       </header>
 
       <main className="max-w-5xl mx-auto">
+        
+        {/* Live Active Inputs Monitor */}
         <LiveInputsBanner activeKeys={activeKeys} pointerData={pointerData} gamepad={gamepad} />
 
+        {/* Row 1: Grids */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
            <div className="h-80">
               <PointerVisualizer pointerData={pointerData} scrollData={scrollData} pollingRate={pollingRate} />
@@ -523,10 +559,12 @@ export default function App() {
            </div>
         </div>
 
+        {/* Row 2: Touch & Gamepad */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
            <TouchVisualizer touches={touches} />
            <GamepadVisualizer gamepad={gamepad} gamepadIndex={gamepadIndex} />
         </div>
+
       </main>
 
       <div className="max-w-5xl mx-auto mt-10 text-center text-xs font-medium text-slate-400 pb-10">
