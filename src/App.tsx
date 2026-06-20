@@ -13,7 +13,7 @@ const LiveInputsBanner = ({ activeKeys, pointerData, gamepad }) => {
   if (pointerData.buttons.right) inputs.push({ type: pointerData.type, label: 'Secondary Click', color: 'bg-red-500' });
 
   // Keyboard
-  Object.values(activeKeys).forEach(k => {
+  Object.values(activeKeys).forEach((k: any) => {
       inputs.push({ type: 'Key', label: k.key === ' ' ? 'Space' : k.key, color: 'bg-purple-600' });
   });
 
@@ -144,7 +144,7 @@ const KeyboardVisualizer = ({ activeKeys, history, maxNkro }) => {
       <div className="flex-1 flex flex-col gap-2">
         <div className="h-24 bg-slate-50 border border-slate-100 rounded-xl p-3 flex flex-wrap gap-2 content-start overflow-hidden relative">
           {activeCount === 0 && <span className="absolute inset-0 flex items-center justify-center text-sm text-gray-400 italic">Press any keys...</span>}
-          {Object.entries(activeKeys).map(([code, data]) => (
+          {Object.entries(activeKeys).map(([code, data]: [string, any]) => (
             <div key={code} className="px-3 py-1.5 bg-purple-100 border border-purple-200 rounded-lg text-purple-700 flex items-center gap-2 animate-in zoom-in duration-75 shadow-sm">
                <span className="font-bold text-sm">{data.key === ' ' ? 'Space' : data.key}</span>
             </div>
