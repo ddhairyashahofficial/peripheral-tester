@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# Peripheral Tester
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A browser-based peripheral diagnostics and testing tool built with React, TypeScript, Vite, and Tailwind CSS.
 
-Currently, two official plugins are available:
+## Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+https://ddhairyashahofficial.github.io/peripheral-tester/
 
-## React Compiler
+## Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Keyboard Testing
 
-## Expanding the ESLint configuration
+* Real-time key detection
+* Simultaneous key press monitoring (NKRO testing)
+* Key press duration measurement
+* Active key visualization
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Mouse & Pointer Testing
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+* Left, middle, and right click detection
+* Pointer coordinate tracking
+* Scroll wheel monitoring
+* Polling rate estimation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Stylus Support
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+* Pressure detection
+* Tilt monitoring
+* Pen input recognition
+
+### Touch Testing
+
+* Multi-touch visualization
+* Touch point tracking
+* Touch identifier display
+
+### Gamepad Testing
+
+* Controller connection detection
+* Button state monitoring
+* Analog stick visualization
+* Rumble testing (supported devices)
+
+### Device Haptics
+
+* Browser vibration API testing
+* Mobile device feedback testing
+
+## Technology Stack
+
+* React
+* TypeScript
+* Vite
+* Tailwind CSS
+* Lucide React Icons
+
+## Use Cases
+
+* Peripheral diagnostics
+* Hardware validation
+* Troubleshooting input devices
+* Browser API experimentation
+* Educational demonstrations
+
+## Installation
+
+```bash
+git clone https://github.com/ddhairyashahofficial/peripheral-tester.git
+cd peripheral-tester
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Build
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+## Deployment
+
+Hosted using GitHub Pages with GitHub Actions.
+
+## Author
+
+Dhairya Shah
