@@ -4,7 +4,7 @@ A browser-based peripheral diagnostics and testing tool built with React, TypeSc
 
 ## Live Demo
 
-https://ddhairyashahofficial.github.io/peripheral-tester/
+https://ddhairyashahofficial.github.io/webtool-peripheral-tester/
 
 ## Features
 
